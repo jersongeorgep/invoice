@@ -5,6 +5,7 @@ I have added the sql file with this repositry.
 I have done only invoice module as per your requirement. 
 Add Invoice, List Invoices and Print Invoice modules are included.
 
+Note: For adding mutiple lines please click Green + Button .
 
 Please check .htaccess file below mentioned option 
 RewriteRule ^(.*)$ /invoice/index.php?/$1 [L]
