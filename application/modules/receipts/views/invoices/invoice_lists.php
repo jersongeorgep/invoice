@@ -7,7 +7,7 @@
     <div class="col-12">
         <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><span></span><a href="<?= site_url('receipts/tax-invoice/add');?>" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> New </a> <button type="button" id="delete_btn" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete </button></span></h3>
+                <h3 class="card-title"><span></span><a href="<?= site_url('receipts/tax-invoice/add');?>" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> New </a></span></h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -19,6 +19,7 @@
                     <th class="text-center" width="15%">Invoice No</th>
                     <th class="text-center" width="15%">Date</th>
                     <th class="text-center">Customer</th>
+                    <th class="text-center">Mobile</th>
                     <th class="text-center" width="15%">Amount</th>
                     <th width="5%" class="text-center">Action</th>
                   </tr>
@@ -31,8 +32,12 @@
                   <tr>
                     <td class="text-center"><?= $sl_no; ?></td>
                     <td class="text-center"><input type="checkbox" name="ids[]" id="ids_<?= $value->id; ?>" value="<?= $value->id; ?>" /></td>
-                    <td><?= $value->size; ?></td>
-                    <td><a href="<?= site_url('masters/bed-size/edit-bed-size/'.$value->id);?>" class="btn btn-sm btn-secondary"><i class="fas fa-pencil-alt"></i></a></td>
+                    <td class="text-center"><?= $value->ref_no; ?></td>
+                    <td class="text-center"><?= $value->invoice_date; ?></td>
+                    <td><?= $value->customer_name; ?></td>
+                    <td class="text-center"d><?= $value->mobile; ?></td>
+                    <td class="text-right"><?= number_format($value->total_value, 2); ?></td>
+                    <td><button type="button" onclick="print_invoice(<?= $value->id; ?>)" class="btn btn-sm btn-danger"><i class="fas fa-print"></i></button></td>
                   </tr>
                   <?php 
                     $sl_no++;
@@ -71,7 +76,7 @@
         $('input:checkbox').not(this).prop('checked', this.checked);
     });
 
-    $('#delete_btn').on('click', function(){
+    /* $('#delete_btn').on('click', function(){
         var post_arr = [];
         $('#show_data input[type=checkbox]').each(function() {
             if (jQuery(this).is(":checked")) {
@@ -98,9 +103,37 @@
         }else{
             alert("Please select rows for delete");
         }
-    });
+    }); */
 
   });
+
+  function print_invoice($id){
+    $.ajax({
+      method : "get",
+      url : base_url + 'receipts/tax-invoice/print/'+ $id,
+      async : false,
+      cache : false,
+      success : function(response){
+        var divContents = response;
+        var printWindow = window.open('', '', 'height=1000,width=800');
+        printWindow.document.write('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Daily Report <?= date('d-m-Y'); ?></title>');
+        printWindow.document.write('<link href="<?= site_url('assets/dist/css/adminlte.min.css')?>" rel="stylesheet" type="text/css">');
+        //printWindow.document.write('<link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet" type="text/css">');
+        printWindow.document.write('<style type="text/css">@page { size: auto;margin: 10mm 10mm 10mm 10mm;} body { margin:10px;padding:0px;} .print-hidden{display:none;} #btnprnt {display:none !important;} </style>');
+        printWindow.document.write('</head><body style="font-family:Lato, sans-serif">');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+	      printWindow.document.close();
+        setTimeout(function(){
+          printWindow.print();
+        },2000);
+	      printWindow.onafterprint = function() {		
+          printWindow.close();
+        }
+      }
+    });
+  }
+      
 
   
 </script>

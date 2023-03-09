@@ -12,7 +12,8 @@ class Admin_Controller extends MY_Controller{
 
 		$this->load->module('layouts');
 		$this->load->model(array(
-			//'masters/Room_m',
+			'receipts/Invoice_m',
+			'receipts/Invoice_line_items_m',
 		));
 	}
 }
